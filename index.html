@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeritasAI - Advanced Fake News Detection Platform</title>
+    <meta name="description" content="Professional AI-powered platform for detecting fake news using advanced NLP and OCR technology. Analyze articles and images with high accuracy.">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ============ PROFESSIONAL THEME - Times New Roman ============ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-deep: #0f1820;
+            --bg-panel: rgba(15, 24, 32, 0.95);
+            --bg-card: rgba(20, 35, 50, 0.92);
+            --border: rgba(0, 212, 255, 0.1);
+            --border-md: rgba(0, 212, 255, 0.2);
+            --primary: #00d4ff;
+            --primary-bright: #4dd9ff;
+            --primary-dim: rgba(0, 212, 255, 0.15);
+            --alert-red: #ff3333;
+            --success: #00cc66;
+            --warning: #ffa500;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --glow: 0 0 40px rgba(0, 212, 255, 0.3);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --secondary: #b300ff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-image: url('/static/project.jpeg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 24, 32, 0.6);
+            z-index: -1;
+        }
+
+        /* ============ BACKGROUND EFFECTS ============ */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.08), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(179, 0, 255, 0.05), transparent 50%);
+            background: rgba(0, 0, 0, 0);
+        }
+
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: rgba(15, 24, 32, 0.4);
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        /* ============ LAYOUT ============ */
+        .page {
+            display: none;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ============ NAVBAR ============ */
+        nav {
+            padding: 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 500;
+            gap: 40px;
+        }
+
+        .nav-logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--text-primary);
+            cursor: pointer;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo span {
+            color: var(--primary);
+        }
+
+        .nav-logo sub {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: normal;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            flex: 1;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ============ BUTTONS ============ */
+        .btn-ghost {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: var(--primary-bright);
+            color: var(--primary-bright);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4dd9ff 0%, #00ccff 100%);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* ============ SECTIONS ============ */
+        .section-label {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            padding: 100px 40px 60px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 20px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+
+        .hero-title {
+            font-size: 54px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .t-violet {
+            color: var(--secondary);
+            text-shadow: 0 0 20px rgba(179, 0, 255, 0.6);
+        }
+
+        .t-dim {
+            display: block;
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+
+        .hero-rule {
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            margin: 24px auto;
+            border-radius: 2px;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 24px auto;
+            max-width: 700px;
+            line-height: 1.8;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-detect {
+            padding: 14px 32px;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-detect:hover {
+            background: var(--primary-bright);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-detect svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-outline-lg {
+            padding: 14px 32px;
+            background: transparent;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            color: var(--secondary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(179, 0, 255, 0.3);
+        }
+
+        .btn-outline-lg:hover {
+            background: rgba(179, 0, 255, 0.2);
+            box-shadow: 0 0 25px rgba(179, 0, 255, 0.6);
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 600px;
+            margin: 60px auto 0;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-cell {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============ HOW IT WORKS ============ */
+        .hiw-section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hiw-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .step-card {
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-color: var(--primary-dim);
+            box-shadow: var(--shadow);
+        }
+
+        .step-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .step-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        /* ============ DETECT PAGE ============ */
+        .detect-wrap,
+        .history-wrap,
+        .about-wrap {
+            padding: 60px 40px;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .detect-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .detect-header p {
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .tabs-bar {
+            display: flex;
+            gap: 12px;
+            margin: 32px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .form-panel {
+            display: none;
+            padding: 32px 0;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Times New Roman', serif;
+            font-size: 14px;
+            color: var(--text-primary);
+            background-color: rgba(20, 35, 50, 0.9);
+            resize: vertical;
+        }
+
+        .text-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+            background-color: rgba(20, 35, 50, 0.95);
+        }
+
+        .upload-zone {
+            display: block;
+            padding: 40px;
+            border: 2px dashed var(--border-md);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(30, 64, 175, 0.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(30, 64, 175, 0.05);
+        }
+
+        .upload-zone input {
+            display: none;
+        }
+
+        .upload-zone-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .upload-zone-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .file-chosen {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .submit-row {
+            margin: 32px 0;
+        }
+
+        .btn-analyse {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-analyse:hover {
+            background: linear-gradient(135deg, #4dd9ff 0%, #00ccff 100%);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-analyse svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .result-box {
+            display: none;
+            padding: 24px;
+            background: rgba(20, 35, 50, 0.9);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            margin-top: 32px;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.2);
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-box.real {
+            border-left-color: var(--success);
+            box-shadow: 0 0 20px rgba(0, 204, 102, 0.2);
+        }
+
+        .result-box.fake {
+            border-left-color: var(--alert-red);
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
+        }
+
+        .result-verdict {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .result-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ============ HISTORY PAGE ============ */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        .history-table thead {
+            background: rgba(30, 64, 175, 0.05);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .verdict-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .verdict-pill.real {
+            background: rgba(0, 204, 102, 0.2);
+            color: var(--success);
+            box-shadow: 0 0 10px rgba(0, 204, 102, 0.3);
+        }
+
+        .verdict-pill.fake {
+            background: rgba(255, 51, 51, 0.2);
+            color: var(--alert-red);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+        }
+
+        .verdict-pill.uncertain {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning);
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
+        }
+
+        /* ============ ABOUT PAGE ============ */
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .about-header p {
+            color: var(--text-muted);
+            margin-top: 16px;
+            line-height: 1.8;
+        }
+
+        .about-mission {
+            padding: 32px;
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            margin: 40px 0;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+
+        .about-mission blockquote {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .about-mission em {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(179, 0, 255, 0.4);
+        }
+
+        .about-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 60px 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin: 60px 0;
+        }
+
+        .about-card {
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .about-card-label {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .about-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .about-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .tech-list {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(30, 64, 175, 0.03);
+            border-radius: 12px;
+        }
+
+        .tech-list-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .tech-items {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .tech-item {
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .tech-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .tech-item-role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============ MODALS ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(15, 24, 32, 0.8);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            position: relative;
+            background: rgba(20, 35, 50, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-label {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: 'Times New Roman', serif;
+        }
+
+        .field-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .modal-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-submit:hover {
+            background: var(--primary-bright);
+        }
+
+        .modal-switch {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .modal-switch a {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ============ RESPONSIVE DESIGN ============ */
+        @media (max-width: 1024px) {
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-items {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 16px;
+                height: 70px;
+                gap: 20px;
+            }
+
+            .nav-logo {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 24px 40px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .t-dim {
+                font-size: 18px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .btn-detect,
+            .btn-outline-lg {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .hiw-section {
+                padding: 60px 24px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .detect-wrap,
+            .history-wrap,
+            .about-wrap {
+                padding: 40px 24px;
+            }
+
+            .tabs-bar {
+                flex-direction: column;
+            }
+
+            .about-card {
+                padding: 24px;
+            }
+
+            .tech-items {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-box {
+                padding: 32px 24px;
+            }
+
+            .history-table {
+                font-size: 12px;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 8px;
+            }
+
+            .snippet {
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+
+            nav {
+                flex-direction: column;
+                height: auto;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+
+            .nav-actions {
+                width: 100%;
+                gap: 8px;
+            }
+
+            .btn-ghost,
+            .btn-primary {
+                flex: 1;
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 40px 16px 30px;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+            }
+
+            .t-dim {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .step-card {
+                padding: 20px;
+            }
+
+            .about-mission blockquote {
+                font-size: 16px;
+            }
+
+            .modal-box {
+                padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 20px;
+            }
+
+            .text-input {
+                min-height: 150px;
+                font-size: 13px;
+            }
+
+            .upload-zone {
+                padding: 24px 16px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-layer"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-grid"></div>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-logo" onclick="showPage('home')">
+            Veritas<span>AI</span>
+            <sub>News Verification System</sub>
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+            <li><a onclick="showPage('detect')" id="nav-detect">Analyse</a></li>
+            <li><a onclick="showPage('history')" id="nav-history">History</a></li>
+            <li><a onclick="showPage('about')" id="nav-about">About Us</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-ghost" onclick="openModal('signin')">Sign In</button>
+            <button class="btn-primary" onclick="openModal('register')">Register</button>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="page-home" class="page active">
+        <section class="hero">
+            <div class="hero-badge">AI-Powered Misinformation Detection System</div>
+            <h1 class="hero-title">
+                Detect Fake News.<br>
+                <span class="t-violet">Verify the Truth.</span>
+                <span class="t-dim">Powered by NLP & OCR</span>
+            </h1>
+            <div class="hero-rule"></div>
+            <p class="hero-desc">
+                Use AI to check if a news article is real or fake. Our tool reads the text and scans images to give you a quick and reliable answer.
+            </p>
+            <div class="hero-actions">
+                <button class="btn-detect" onclick="showPage('detect')">Start Detection</button>
+                <button class="btn-outline-lg" onclick="showPage('about')">How It Works</button>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-cell">
+                    <div class="stat-num">98.2%</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-num">1.8s</div>
+                    <div class="stat-label">Avg. Response</div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-num">AI + ML</div>
+                    <div class="stat-label">Core Tech</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="hiw-section">
+            <div class="hiw-header">
+                <div class="section-label">Process Overview</div>
+                <h2 class="section-title">How It Works</h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-title">Submit Content</div>
+                    <p class="step-desc">Paste a news article or upload a screenshot. The system accepts plain text and image files in JPG or PNG format.</p>
+                    <span class="step-tag">Input Layer</span>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-title">AI Analysis</div>
+                    <p class="step-desc">Our AI reads the content carefully, looking for signs of fake or misleading information. Images are scanned to extract text first.</p>
+                    <span class="step-tag">Processing Layer</span>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-title">Receive Verdict</div>
+                    <p class="step-desc">You get a clear result — Real, Fake, or Uncertain — along with a confidence score showing how sure the AI is.</p>
+                    <span class="step-tag">Output Layer</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETECT PAGE -->
+    <div id="page-detect" class="page">
+        <div class="detect-wrap">
+            <div class="detect-header">
+                <div class="section-label">Detection Module</div>
+                <h1 class="section-title">Content Analysis</h1>
+                <p>Submit a news article or image for AI-powered credibility assessment.</p>
+            </div>
+
+            <div class="tabs-bar">
+                <button class="tab-btn active" onclick="switchTab('text', this)">Text Article</button>
+                <button class="tab-btn" onclick="switchTab('image', this)">Image Upload</button>
+            </div>
+
+            <div class="form-panel active" id="panel-text">
+                <form id="textForm" onsubmit="submitTextAnalysis(event)">
+                    <label class="input-label">News Article or Headline</label>
+                    <textarea class="text-input" id="textInput" placeholder="Paste the full news article or headline here..."></textarea>
+                    <div class="submit-row">
+                        <button type="submit" class="btn-analyse" id="textSubmitBtn">
+                            Analyse Content
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </form>
+                <div id="textResultContainer"></div>
+            </div>
+
+            <div class="form-panel" id="panel-image">
+                <form id="imageForm" onsubmit="submitImageAnalysis(event)" enctype="multipart/form-data">
+                    <label class="input-label">News Screenshot or Image</label>
+                    <label class="upload-zone">
+                        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png" onchange="showFile(this)">
+                        <div class="upload-zone-title">Click to upload or drag & drop</div>
+                        <div class="upload-zone-sub">JPG · JPEG · PNG · Max 10 MB</div>
+                        <div class="file-chosen" id="fileChosen"></div>
+                    </label>
+                    <div class="submit-row">
+                        <button type="submit" class="btn-analyse" id="imageSubmitBtn">
+                            Analyse Image
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </form>
+                <div id="imageResultContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY PAGE -->
+    <div id="page-history" class="page">
+        <div class="history-wrap">
+            <div class="section-label">Detection Records</div>
+            <h1 class="section-title">Analysis History</h1>
+            <div id="history-container"></div>
+        </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="page-about" class="page">
+        <div class="about-wrap">
+            <div class="about-header">
+                <div class="section-label">About Our Platform</div>
+                <h1 class="section-title">Combating Digital Misinformation</h1>
+                <p>VeritasAI is a Final Year Project built to help people identify fake news using advanced AI technology.</p>
+            </div>
+
+            <div class="about-mission">
+                <blockquote>To give everyone a simple, reliable way to check if news is real — so people can stay informed and avoid being misled.</blockquote>
+            </div>
+
+            <div class="about-divider"></div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-card-label">Challenge</div>
+                    <div class="about-card-title">Information Overload</div>
+                    <p>There is so much news online that it is hard to tell what is real and what is fabricated.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-card-label">Solution</div>
+                    <div class="about-card-title">AI-Powered Verification</div>
+                    <p>Our tool uses machine learning to analyze language patterns, sources, and credibility signals.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-card-label">Technology</div>
+                    <div class="about-card-title">NLP & OCR Integration</div>
+                    <p>We process articles with LSTM models and extract text from images using OCR technology.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-card-label">Impact</div>
+                    <div class="about-card-title">Academic Innovation</div>
+                    <p>This project demonstrates how academic research can create practical, useful solutions.</p>
+                </div>
+            </div>
+
+            <div class="tech-list">
+                <div class="tech-list-title">Technology Stack</div>
+                <div class="tech-items">
+                    <div class="tech-item">
+                        <div class="tech-item-name">Python / Flask</div>
+                        <div class="tech-item-role">Backend Framework</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-name">LSTM & scikit-learn</div>
+                        <div class="tech-item-role">NLP Classification</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-name">Tesseract OCR</div>
+                        <div class="tech-item-role">Image Text Extraction</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-name">HTML / CSS / JS</div>
+                        <div class="tech-item-role">Frontend Interface</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="modal-signin">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('signin')">✕</button>
+            <div class="modal-label">Authentication</div>
+            <h2 class="modal-title">Sign In</h2>
+            <div class="field-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="you@example.com">
+            </div>
+            <div class="field-group">
+                <label>Password</label>
+                <input type="password" placeholder="Enter your password">
+            </div>
+            <button class="modal-submit">Sign In</button>
+            <div class="modal-switch">No account? <a onclick="switchModal('signin','register')">Create one</a></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-register">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('register')">✕</button>
+            <div class="modal-label">Create Account</div>
+            <h2 class="modal-title">Register</h2>
+            <div class="field-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Your full name">
+            </div>
+            <div class="field-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="you@example.com">
+            </div>
+            <div class="field-group">
+                <label>Password</label>
+                <input type="password" placeholder="Create a password">
+            </div>
+            <div class="field-group">
+                <label>Confirm Password</label>
+                <input type="password" placeholder="Repeat your password">
+            </div>
+            <button class="modal-submit">Create Account</button>
+            <div class="modal-switch">Already registered? <a onclick="switchModal('register','signin')">Sign In</a></div>
+        </div>
+    </div>
+
+    <script>
+        const pages = ['home', 'detect', 'history', 'about'];
+
+        function showPage(name) {
+            pages.forEach(p => {
+                const page = document.getElementById('page-' + p);
+                if (page) page.classList.remove('active');
+                const nav = document.getElementById('nav-' + p);
+                if (nav) nav.classList.remove('active');
+            });
+            const activePage = document.getElementById('page-' + name);
+            if (activePage) activePage.classList.add('active');
+            const activeNav = document.getElementById('nav-' + name);
+            if (activeNav) activeNav.classList.add('active');
+            window.scrollTo(0, 0);
+            if (name === 'history') renderHistory();
+        }
+
+        function switchTab(tab, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+        }
+
+        async function submitTextAnalysis(event) {
+            event.preventDefault();
+            const textInput = document.getElementById('textInput').value.trim();
+            const submitBtn = document.getElementById('textSubmitBtn');
+            const resultContainer = document.getElementById('textResultContainer');
+
+            if (!textInput) {
+                resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ Input Required</div><div class="result-desc">Please enter some text to analyze.</div></div>`;
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Analyzing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('text_input', textInput);
+                const response = await fetch('/api/analyze/text', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (data.ok) {
+                    const verdictIcon = data.verdict === 'REAL' ? '✅' : data.verdict === 'FAKE' ? '❌' : '⚠️';
+                    resultContainer.innerHTML = `<div class="result-box visible ${data.verdict.toLowerCase()}"><div class="result-verdict">${verdictIcon} ${data.label}</div><div class="result-desc">${data.reason}</div></div>`;
+                    document.getElementById('textInput').value = '';
+                } else {
+                    resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ Error</div><div class="result-desc">${data.error}</div></div>`;
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ Network Error</div><div class="result-desc">Could not connect to server.</div></div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Analyse Content<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+            }
+        }
+
+        async function submitImageAnalysis(event) {
+            event.preventDefault();
+            const imageInput = document.getElementById('imageInput');
+            const submitBtn = document.getElementById('imageSubmitBtn');
+            const resultContainer = document.getElementById('imageResultContainer');
+
+            if (!imageInput.files || imageInput.files.length === 0) {
+                resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ No Image Selected</div></div>`;
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Analyzing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('image_input', imageInput.files[0]);
+                const response = await fetch('/api/analyze/image', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (data.ok) {
+                    const verdictIcon = data.verdict === 'REAL' ? '✅' : data.verdict === 'FAKE' ? '❌' : '⚠️';
+                    resultContainer.innerHTML = `<div class="result-box visible ${data.verdict.toLowerCase()}"><div class="result-verdict">${verdictIcon} ${data.label}</div><div class="result-desc">${data.reason}</div></div>`;
+                    imageInput.value = '';
+                    document.getElementById('fileChosen').textContent = '';
+                } else {
+                    resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ Error</div><div class="result-desc">${data.error}</div></div>`;
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `<div class="result-box visible"><div class="result-verdict">❌ Network Error</div></div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Analyse Image<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+            }
+        }
+
+        function showFile(input) {
+            if (input.files && input.files[0]) document.getElementById('fileChosen').textContent = input.files[0].name;
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            fetch('/api/logs').then(res => res.json()).then(dbLogs => {
+                if (!dbLogs || dbLogs.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><div class="empty-state-title">No Records</div><div class="empty-state-sub">History will appear here after analysis.</div></div>`;
+                    return;
+                }
+                const rows = dbLogs.map(log => `<tr><td>${new Date(log.timestamp).toLocaleDateString()}</td><td><span class="verdict-pill ${(log.prediction || 'uncertain').toLowerCase()}">${log.prediction || 'UNCERTAIN'}</span></td><td class="snippet">${log.input_content ? log.input_content.substring(0, 80) : 'N/A'}</td><td>${log.confidence ? Math.round(log.confidence * 100) : 0}%</td></tr>`).join('');
+                container.innerHTML = `<table class="history-table"><thead><tr><th>Date</th><th>Verdict</th><th>Content</th><th>Confidence</th></tr></thead><tbody>${rows}</tbody></table>`;
+            }).catch(() => {
+                container.innerHTML = `<div class="empty-state"><div class="empty-state-title">Unable to Load</div></div>`;
+            });
+        }
+
+        function openModal(name) { document.getElementById('modal-' + name).classList.add('open'); }
+        function closeModal(name) { document.getElementById('modal-' + name).classList.remove('open'); }
+        function switchModal(c, o) { closeModal(c); setTimeout(() => openModal(o), 180); }
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', e => { if (e.target === el) closeModal(el.id.split('-')[1]); });
+        });
+    </script>
+</body>
+
+</html>
